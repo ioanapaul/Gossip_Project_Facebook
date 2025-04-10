@@ -1,0 +1,10 @@
+class PrivateMessage < ApplicationRecord
+  belongs_to :sender, class_name: 'User'  # Relation pour l'expéditeur
+  has_and_belongs_to_many :recipients, 
+                          class_name: 'User', 
+                          join_table: 'private_messages_users', 
+                          foreign_key: 'private_message_id', 
+                          association_foreign_key: 'user_id'
+end
+
+

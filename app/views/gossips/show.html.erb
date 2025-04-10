@@ -1,0 +1,84 @@
+<!-- app/views/gossips/show.html.erb -->
+<div class="card mb-4 shadow">
+  <div class="card-header bg-white d-flex justify-content-between align-items-center">
+    <h3 class="mb-0"><%= @gossip.title %></h3>
+    <div>
+      <% if logged_in? %>
+        <% like = current_user.likes.find_by(likable: @gossip) %>
+        <% if like %>
+          <%= button_to like_path(like), method: :delete, class: "btn btn-danger" do %>
+            <i class="fas fa-heart"></i> <%= @gossip.likes.count %>
+          <% end %>
+        <% else %>
+          <%= button_to gossip_likes_path(@gossip), method: :post, class: "btn btn-outline-danger" do %>
+            <i class="far fa-heart"></i> <%= @gossip.likes.count %>
+          <% end %>
+        <% end %>
+      <% else %>
+        <span class="btn btn-outline-secondary disabled">
+          <i class="far fa-heart"></i> <%= @gossip.likes.count %>
+        </span>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <p class="card-text"><%= @gossip.content %></p>
+  </div>
+
+  <div class="card-footer bg-white">
+    <div class="d-flex justify-content-between align-items-center">
+      <small class="text-muted">
+        Par <%= @gossip.user.first_name %> <%= @gossip.user.last_name %> • 
+        <%= @gossip.created_at.strftime("%d/%m/%Y à %H:%M") %>
+      </small>
+      
+      <% if logged_in? && current_user == @gossip.user %>
+        <div>
+          <%= link_to "Modifier", edit_gossip_path(@gossip), class: "btn btn-sm btn-outline-primary" %>
+          <%= button_to "Supprimer", gossip_path(@gossip), method: :delete, class: "btn btn-sm btn-outline-danger ms-2", data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer ce potin?" } %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<!-- Section commentaires -->
+<div class="card shadow">
+  <div class="card-header bg-white">
+    <h4>Commentaires (<%= @comments.count %>)</h4>
+  </div>
+  
+  <div class="card-body">
+    <% if logged_in? %>
+      <%= form_with(model: [@gossip, @comment], class: "mb-4") do |f| %>
+        <div class="mb-3">
+          <%= f.text_area :content, rows: 3, class: "form-control", placeholder: "Ajouter un commentaire...", required: true %>
+        </div>
+        <%= f.submit "Commenter", class: "btn btn-primary" %>
+      <% end %>
+    <% else %>
+      <div class="alert alert-info">
+        Connectez-vous pour ajouter un commentaire.
+        <%= link_to "Se connecter", login_path, class: "alert-link" %>
+      </div>
+    <% end %>
+    
+    <% if @comments.any? %>
+      <% @comments.each do |comment| %>
+        <div class="card mb-3">
+          <div class="card-body">
+            <h6 class="card-subtitle mb-2 text-muted"><%= comment.user.first_name %> <%= comment.user.last_name %></h6>
+            <p class="card-text"><%= comment.content %></p>
+            <small class="text-muted"><%= comment.created_at.strftime("%d/%m/%Y à %H:%M") %></small>
+          </div>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="text-center mt-4">
+        <p class="text-muted">Aucun commentaire pour le moment.</p>
+      </div>
+    <% end %>
+  </div>
+</div>
+

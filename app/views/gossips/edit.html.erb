@@ -1,0 +1,42 @@
+<!-- app/views/gossips/edit.html.erb -->
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card shadow">
+      <div class="card-header bg-primary text-white">
+        <h3 class="mb-0">Modifier le potin</h3>
+      </div>
+      <div class="card-body">
+        <% if @gossip.errors.any? %>
+          <div class="alert alert-danger">
+            <h4 class="alert-heading">Erreurs:</h4>
+            <ul class="mb-0">
+              <% @gossip.errors.full_messages.each do |error| %>
+                <li><%= error %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <%= form_with(model: @gossip) do |f| %>
+          <div class="mb-3">
+            <%= f.label :title, "Titre", class: "form-label" %>
+            <%= f.text_field :title, class: "form-control", required: true %>
+            <div class="form-text">Entre 3 et 14 caractères</div>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :content, "Contenu", class: "form-label" %>
+            <%= f.text_area :content, rows: 6, class: "form-control", required: true %>
+          </div>
+
+          <div class="d-grid">
+            <%= f.submit "Mettre à jour", class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      </div>
+      <div class="card-footer text-center">
+        <%= link_to "Annuler", gossip_path(@gossip), class: "btn btn-outline-secondary" %>
+      </div>
+    </div>
+  </div>
+</div>
